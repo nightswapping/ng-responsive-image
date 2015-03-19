@@ -1,0 +1,42 @@
+{
+  "name": "ng-responsive-image",
+  "version": "0.1.0",
+  "description": "Lightweight responsive images for angular apps.",
+  "main": "dist/ng-responsive-image.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": { "name": "Nightswapping", "homepage": "http://nightswapping.com" },
+  "contributors": [
+    { "name": "Mehdi Benadda", "email": "me@mbenadda.com", "homepage": "http://mbenadda.com" }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nightswapping/ng-responsive-image.git"
+  },
+  "keywords": [
+    "responsive",
+    "angular",
+    "angularjs",
+    "images",
+    "source"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nightswapping/ng-responsive-image/issues"
+  },
+  "homepage": "https://github.com/nightswapping/ng-responsive-image",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-jshint": "^0.11.0",
+    "grunt-contrib-uglify": "^0.8.0",
+    "grunt-jscs": "^1.5.0",
+    "grunt-karma": "^0.10.1",
+    "jasmine-core": "^2.2.0",
+    "karma": "^0.12.31",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-jasmine": "^0.3.5"
+  }
+}
