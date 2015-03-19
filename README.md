@@ -73,7 +73,30 @@ __Through HTML attributes.__ You can specify two of __width__, __height__ and __
 
 __By using both.__ You can mix and match the first two approaches: CSS width and height attribute, CSS height and ratio attribute, etc.
 
-## API docs
+## Documentation
+
+### Installation
+
+This module is available through npm and bower.
+
+```bash
+npm install ng-responsive-image --save
+# or
+bower install ng-responsive-image --save
+```
+
+Add `{modules_folder}/ng-responsive-image/dist/ng-responsive-image.js` to your build and to your index.html file. Then simply require it in your module's dependencies list, like this :
+
+```javascript
+angular.module('myModule', [
+ // Various dependencies
+ 'ng-responsive-image'
+])
+```
+
+You're good to go, you can now use r-src in your templates !
+
+### API docs
 
 #### Required: image object
 
