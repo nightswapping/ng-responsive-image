@@ -7,7 +7,8 @@ module.exports = function (karma) {
     files: [
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'src/**/*.js'
+      'src/**/*.js',
+      'tests/**/*.js'
     ],
 
     frameworks: [ 'jasmine' ],

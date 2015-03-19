@@ -9,10 +9,11 @@ module.exports = function (grunt) {
 
     src_dir: 'src',
     dist_dir: 'dist',
+    test_dir: 'tests',
 
     files: {
       js: [ '<%= src_dir %>/**/*.js', '!<%= src_dir %>/**/*.spec.js' ],
-      jsunit: [ '<%= src_dir %>/**/*.unit.spec.js' ],
+      jsunit: [ '<%= test_dir %>/**/*.unit.spec.js' ],
       config: [ 'Gruntfile.js', 'karma-conf.js' ]
     }
   });
