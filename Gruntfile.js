@@ -79,7 +79,7 @@ module.exports = function (grunt) {
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
             '<%= files.jsunit %>',
-            '<%= dist_dir %>/<%= pkg.name %>-<%= pkg.version %>.js'
+            '<%= dist_dir %>/<%= pkg.name %>.js'
           ]
         }
       },
@@ -90,7 +90,7 @@ module.exports = function (grunt) {
             'bower_components/angular/angular.js',
             'bower_components/angular-mocks/angular-mocks.js',
             '<%= files.jsunit %>',
-            '<%= dist_dir %>/<%= pkg.name %>-<%= pkg.version %>.min.js'
+            '<%= dist_dir %>/<%= pkg.name %>.min.js'
           ]
         }
       }
@@ -129,7 +129,7 @@ module.exports = function (grunt) {
       },
       dist: {
         src: [ '<%= files.js %>' ],
-        dest: '<%= dist_dir %>/<%= pkg.name %>-<%= pkg.version %>.js'
+        dest: '<%= dist_dir %>/<%= pkg.name %>.js'
       }
     },
 
@@ -140,7 +140,7 @@ module.exports = function (grunt) {
       },
       dist: {
         src: [ '<%= files.js %>' ],
-        dest: '<%= dist_dir %>/<%= pkg.name %>-<%= pkg.version %>.min.js'
+        dest: '<%= dist_dir %>/<%= pkg.name %>.min.js'
       }
     }
   });
