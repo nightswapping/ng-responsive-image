@@ -10,10 +10,9 @@ describe('Responsive img src', function () {
   beforeEach(module('ng-responsive-image'));
 
   beforeEach(module(function ($provide) {
-    // Remotely control the evaluated pixel density. If all query matches fail, it's assumed to be 1
-    $provide.value('$window', { matchMedia: jasmine.createSpy('matchMedia').and.returnValue({ matches: false }) });
+    // Eliminate pixel density as a variable as this is not the place to test it
+    $provide.value('RSrcPixelDensity', 1);
   }));
-
 
   beforeEach(inject(function (_$compile_, $rootScope) {
     $compile = _$compile_;

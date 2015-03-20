@@ -1,8 +1,7 @@
 describe('Responsive image src - image matcher', function () {
   'use strict';
 
-  var $window,
-      imgObj,
+  var imgObj,
       matchImage;
 
   beforeEach(module('ng-responsive-image.matcher'));
@@ -26,9 +25,8 @@ describe('Responsive image src - image matcher', function () {
   describe('pixel density === 1 environment', function () {
 
     beforeEach(module(function ($provide) {
-      // Remotely control the evaluated pixel density. If all query matches fail, it's assumed to be 1
-      $window = { matchMedia: jasmine.createSpy('matchMedia').and.returnValue({ matches: false }) };
-      $provide.value('$window', $window);
+      // Remotely control the evaluated pixel density.
+      $provide.value('RSrcPixelDensity', 1);
     }));
 
     beforeEach(inject(injector));
@@ -67,11 +65,11 @@ describe('Responsive image src - image matcher', function () {
 
   });
 
-  describe('pixel density ===3 3 environment', function () {
+  describe('pixel density === 3 environment', function () {
 
     beforeEach(module(function ($provide) {
-      $window = { matchMedia: jasmine.createSpy('matchMedia').and.returnValue({ matches: true }) };
-      $provide.value('$window', $window);
+      // Remotely control the evaluated pixel density.
+      $provide.value('RSrcPixelDensity', 3);
     }));
 
     beforeEach(inject(injector));

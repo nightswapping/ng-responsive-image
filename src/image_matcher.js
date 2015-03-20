@@ -3,25 +3,9 @@
 
   app.factory('matchImage', matchImageFactory);
 
-  matchImageFactory.$inject = [ '$window' ];
-  function matchImageFactory ($window) {
-
-    // Outside of the actual function since those matches need not be repeated more than once.
-    var pixelDensity =
-
-    ($window.matchMedia(
-      'only screen and (-webkit-min-device-pixel-ratio: 3), ' + // Safari & iOS Safari & older android browser
-      'only screen and (min-resolution: 3dppx), ' +             // Standard - Chrome, Firefox, Chrome for Android
-      'only screen and (min-resolution: 288dpi)'                // IE 9-11, Opera Mini
-    ).matches) ? 3 :
-
-    ($window.matchMedia(
-      'only screen and (-webkit-min-device-pixel-ratio: 1.5), ' +
-      'only screen and (min-resolution: 1.5dppx), ' +
-      'only screen and (min-resolution: 144dpi)'
-    ).matches) ? 2 :
-
-    1;
+  matchImageFactory.$inject = [ '$window', 'RSrcPixelDensity' ];
+  function matchImageFactory ($window, RSrcPixelDensity) {
+    // RSrcPixelDensity should be an integer between 1 and 4 representing the screen's pixel density.
 
     return function matchImage (imgObj, width, ratio) {
 
@@ -59,7 +43,7 @@
 
       // Find images large enough to fit, or larger
       .filter(function filterImagesByWidth (item, index, array) {
-        return +item[1] >= width * pixelDensity;
+        return +item[1] >= width * RSrcPixelDensity;
       })
 
       // Sort images by ratio for simpler selection
@@ -82,7 +66,7 @@
       // Programmer error, we should just throw and try to be helpful
       if (!match) {
         throw new Error('No image in src fitting width (' + width + '), ' +
-          'pixel density (' + pixelDensity + '), & ratio (' + ratio + ') constraints');
+          'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints');
       }
 
       return match[2];
@@ -90,5 +74,5 @@
   }
 
 })(angular.module('ng-responsive-image.matcher', [
-
+  'ng-responsive-image.pixel-density'
 ]));
