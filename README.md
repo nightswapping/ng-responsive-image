@@ -46,7 +46,7 @@ You can trust `ng-responsive-image` to :
 
 - Find a perfect fit among the provided images
 - Select the best possible image even if there is no perfect match (it will pick the smallest image large enough to fit, and the least tall image that will still fulfill the constraints).
-- Take into account the target screen's pixel density: it will simply double or triple the width constraint.
+- Take into account the target screen's pixel density: it will simply double or triple the width constraint (You can configure this behavior).
 - Work with background images through the `background="true"` attribute.
 
 You should not trust `ng-responsive-image` to :
@@ -122,6 +122,27 @@ Directly pass this value to the directive through `r-src="imageObject"`. This is
 <div r-src="imageObject" background="true">
 ```
 
+#### Optional: manage pixel density
+
+By default `ng-responsive-image` takes the screen's pixel density into account when chosing the right image. This simply means the required width is multiplied by 2 or 3. If you do not wish for `ng-responsive-image` to exhibit this behavior, or want to override the way it evaluates pixel density, you can.
+
+This functionality is contained in a provider which you can configure through the `provideCustom` method. You can do this in an angular config block. Keep in mind pixel density is generally expressed as an integer between 1 and 4.
+
+```javascript
+app.config(function (RSrcPixelDensityProvider) {
+  // You can provide a hard value as a number.
+  // For example, 1 to just not take pixel density into account at all.
+  RSrcPixelDensityProvider.provideCustom(1);
+
+  // Or if you have other means than a media query to determine this,
+  // input any number you want.
+  RSrcPixelDensityProvider.provideCustom(3);
+
+  // Or you can supply a function that will be used to evaluate the
+  // screen's pixel density. It should return a number.
+  RSrcPixelDensityProvider.provideCustom(function () { return 1 + 1; });
+});
+```
 
 ## CONTRIBUTING
 
