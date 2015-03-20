@@ -117,4 +117,27 @@ describe('Responsive img src', function () {
     $compile(element)(scope);
     expect(window.getComputedStyle(element[0])['background-image']).toEqual('url("http://image3.example.com/")');
   });
+
+
+  it('should not do anything until imageObject is actually defined and load the image as soon as it is', function () {
+    element = angular.element('<img src="' + transparentGif + '" r-src="imgObj">');
+    document.body.appendChild(element[0]);
+    element.css('width', '300px');
+    element.css('height', '300px');
+    scope.imgObj = null;
+
+    $compile(element)(scope);
+    expect(element.attr('src')).toEqual(transparentGif);
+
+    scope.imgObj = {
+      url_100x100: 'http://image1.example.com',
+      url_200x200: 'http://image2.example.com',
+      url_300x300: 'http://image3.example.com',
+      url_300x200: 'http://image4.example.com',
+      url_600x400: 'http://image5.example.com',
+      url_900x600: 'http://image6.example.com'
+    };
+    scope.$apply();
+    expect(element.attr('src')).toEqual('http://image3.example.com');
+  });
 });

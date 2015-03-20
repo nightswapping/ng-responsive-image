@@ -29,6 +29,11 @@
         scope.$watch('src', setImage);
 
         function setImage () {
+          if (!scope.src) {
+            // We don't want anything to happen until scope.src actually receives a value.
+            return;
+          }
+
           var url = matchImage(scope.src, width, ratio);
 
           if (element.attr('background')) {
