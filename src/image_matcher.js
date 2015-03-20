@@ -35,8 +35,15 @@
       // Format the incoming data into an easily iterable format
       // Assume data in a format like { url_100x100: 'https://example.com', ... }
       .map(function formatImageObject (item, index, array) {
-        var m      = item.match(/^url_(\d+)x(\d+)$/),
-            width  = m[1],
+        var m      = item.match(/^url_(\d+)x(\d+)$/);
+
+        if (!m) {
+          // This will allow properties that do not contain image urls into those objects : things
+          // like IDs, content object references, etc.
+          return null;
+        }
+
+        var width  = m[1],
             height = m[2],
             ratio  = width / height;
         if (!width || !height || !ratio) {
@@ -45,9 +52,9 @@
         return [ ratio, width, imgObj[item] ];
       })
 
-      // Find images that match the exact ratio or taller
+      // Filter out non-img items and find images that match the exact ratio or taller
       .filter(function filterImagesByRatio (item, index, array) {
-        return +item[0] <= +ratio;
+        return item && +item[0] <= +ratio;
       })
 
       // Sort images by ratio for simpler selection

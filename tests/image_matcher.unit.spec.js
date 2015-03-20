@@ -16,7 +16,10 @@ describe('Responsive image src - image matcher', function () {
       url_300x300: 'http://image3.example.com',
       url_300x200: 'http://image4.example.com',
       url_600x400: 'http://image5.example.com',
-      url_900x600: 'http://image6.example.com'
+      url_900x600: 'http://image6.example.com',
+      // Just put in some random keys to make sure we can support that and filter them out.
+      id: '0000',
+      content_object: '/user/1111'
     };
   }
 
