@@ -53,6 +53,18 @@ describe('Responsive image src - image matcher', function () {
       expect(function () { matchImage(imgObj, 1000, 1.5); }).toThrow();
     });
 
+    it('should work with specific cases where the highest viable ratio images would not be large enough', function () {
+      imgObj = {
+        url_100x100: 'http://image1.example.com',
+        url_200x200: 'http://image2.example.com',
+        url_300x300: 'http://image3.example.com',
+        url_200x300: 'http://image4.example.com',
+        url_400x600: 'http://image5.example.com',
+        url_600x900: 'http://image6.example.com'
+      };
+      expect(matchImage(imgObj, 400, 1.2)).toEqual('http://image5.example.com');
+    });
+
   });
 
   describe('pixel density ===3 3 environment', function () {

@@ -63,6 +63,11 @@
         return item && +item[0] <= +ratio;
       })
 
+      // Find images large enough to fit, or larger
+      .filter(function filterImagesByWidth (item, index, array) {
+        return +item[1] >= width * pixelDensity;
+      })
+
       // Sort images by ratio for simpler selection
       .sort(function sortImagesByRatio (a, b) {
         return a[0] - b[0];
@@ -74,16 +79,11 @@
         return (acc.length > 0) && (+item[0] < acc[0][0]) ? acc : acc.concat([ item ]);
       }, [])
 
-      // Find images large enough to fit, or larger
-      .filter(function filterImagesByWidth (item, index, array) {
-        return +item[1] >= width * pixelDensity;
-      })
-
       // Keep the smallest image that did fit. If there's only one image, this will be it.
       .reduce(function keepSmallestWidthImages (acc, item, index, array) {
         return !acc ? item :                        // If there's nothing yet, take the first item that comes
           (+item[1] < +acc[1]) ? item : acc;        // If the item is smaller than what we had, take it instead
-      });
+      }, false); // Avoid a TypeError to allow our smarter reporting right below.
 
       // Programmer error, we should just throw and try to be helpful
       if (!match) {
