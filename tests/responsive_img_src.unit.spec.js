@@ -9,7 +9,7 @@ describe('Responsive img src', function () {
 
   beforeEach(module('ng-responsive-image'));
 
-  beforeEach(module(function ($provide) {
+  beforeEach(module('ng-responsive-image.pixel-density', function ($provide) {
     // Eliminate pixel density as a variable as this is not the place to test it
     $provide.value('RSrcPixelDensity', 1);
   }));
@@ -38,6 +38,8 @@ describe('Responsive img src', function () {
     element.css('height', '300px');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image3.example.com');
   });
 
@@ -54,6 +56,8 @@ describe('Responsive img src', function () {
 
     document.body.appendChild(parent[0]);
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image4.example.com');
   });
 
@@ -63,6 +67,8 @@ describe('Responsive img src', function () {
     element.css('width', '300px');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image4.example.com');
   });
 
@@ -72,6 +78,8 @@ describe('Responsive img src', function () {
     element.css('width', '900px');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image6.example.com');
   });
 
@@ -81,6 +89,8 @@ describe('Responsive img src', function () {
     element.css('height', '100px');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image1.example.com');
   });
 
@@ -90,6 +100,8 @@ describe('Responsive img src', function () {
     element.css('height', '400px');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image5.example.com');
   });
 
@@ -97,6 +109,8 @@ describe('Responsive img src', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" ratio="1.5" height="600">');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image6.example.com');
   });
 
@@ -104,6 +118,8 @@ describe('Responsive img src', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" width="200" height="200">');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual('http://image2.example.com');
   });
 
@@ -114,6 +130,8 @@ describe('Responsive img src', function () {
     element.css('height', '300px');
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(window.getComputedStyle(element[0])['background-image']).toEqual('url("http://image3.example.com/")');
   });
 
@@ -126,6 +144,8 @@ describe('Responsive img src', function () {
     scope.imgObj = null;
 
     $compile(element)(scope);
+    scope.$apply();
+
     expect(element.attr('src')).toEqual(transparentGif);
 
     scope.imgObj = {

@@ -11,8 +11,8 @@
 
   app.directive('rSrc', rSrc);
 
-  rSrc.$inject = [ 'matchImage' ];
-  function rSrc (matchImage) {
+  rSrc.$inject = [ '$q', 'matchImage' ];
+  function rSrc ($q, matchImage) {
 
     return {
       restrict: 'A',
@@ -23,23 +23,27 @@
         var width, ratio;
 
         // Calculate the constraints and then set the image's src ASAP
-        setImage(constraints());
+        updateImage(constraints());
 
         // Set it again every time the bound image object changes (without recalculating constraints)
-        scope.$watch('src', setImage);
+        scope.$watch('src', updateImage);
 
-        function setImage () {
+        function updateImage () {
           if (!scope.src) {
             // We don't want anything to happen until scope.src actually receives a value.
             return;
           }
 
-          var url = matchImage(scope.src, width, ratio);
+          // Handle values as well as then-able promises
+          $q.when(scope.src).then(setImage);
 
-          if (element.attr('background')) {
-            element.css('background-image', 'url(' + url + ')');
-          } else {
-            element.attr('src', url);
+          function setImage (src) {
+            var url = matchImage(src, width, ratio);
+            if (element.attr('background')) {
+              element.css('background-image', 'url(' + url + ')');
+            } else {
+              element.attr('src', url);
+            }
           }
         }
 

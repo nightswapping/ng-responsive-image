@@ -102,6 +102,8 @@ You're good to go, you can now use r-src in your templates !
 
 Directly pass this value to the directive through `r-src="imageObject"`. This is bound and the directive will replace the image if the imageObject is mutated or replaced. Here's the expected format : `url_[[ WIDTH ]]x[[ HEIGHT ]]: '[[ URL ]]'`. You can mix and match ratios in the same object as `ng-responsive-image` can select the most appropriate one.
 
+NOTE: This image object can be passed directly as a value (eg. the object below), or as a then-able promise that will resolve to a properly formatted object. In which case the directive will wait for the promise to be resolved before selecting the image and placing it as src.
+
 ```javascript
 {
   url_10x10: 'http://example.com/image1',
