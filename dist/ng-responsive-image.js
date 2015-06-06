@@ -1,5 +1,5 @@
 /**!
- * ng-responsive-image - v0.1.4 - 2015-06-02
+ * ng-responsive-image - v0.1.4 - 2015-06-06
  *
  * Copyright (c) 2015 [object Object]
  * Distributed under the MIT licence
@@ -153,13 +153,48 @@
         src: '=rSrc'
       },
       link: function linkResponsiveSrc (scope, element, attrs) {
-        var width, ratio;
+        var width, ratio, unwatch;
 
-        // Calculate the constraints and then set the image's src ASAP
-        updateImage(constraints());
+        // Calculate the constraints. We only need to do this once.
+        constraints();
 
-        // Set it again every time the bound image object changes (without recalculating constraints)
-        scope.$watch('src', updateImage);
+        function waitForFirstLoad () {
+
+          // First load has not happened and we have not started watching yet
+          if (!unwatch && !findPropToWatch(scope.src)) {
+            // Start to watch so we can react when src becomes useful
+            unwatch = scope.$watch('src', waitForFirstLoad);
+          }
+
+          // First load has happened and we have a useful object
+          else if (findPropToWatch(scope.src)) {
+            // If we were waiting for that, cancel the watcher
+            if (unwatch) { unwatch(); }
+            // Trigger the watch that will actually update the image and keep watching for changes
+            waitForSubsequentLoads();
+          }
+        }
+
+        function waitForSubsequentLoads () {
+
+          // Set the image again every time the bound image object changes (without recalculating constraints)
+          // Make sure we keep our $watch active: rebind it when out previous property disappears from the object
+          unwatch = scope.$watch('src.' + findPropToWatch(scope.src), function self (newValue, oldValue) {
+            // If there is no newValue, the property we were watching on no longer exists, look for another url_
+            // property to set our watch on instead.
+            if (oldValue && !newValue) {
+              unwatch();
+              unwatch = scope.$watch('src.' + findPropToWatch(scope.src), self);
+            }
+
+            // If there is a new value on the same property we can just keep watching it
+            // In any case, since there were changes, update the image
+            updateImage();
+          });
+        }
+
+        // Start waiting for the first load
+        waitForFirstLoad();
 
         function updateImage () {
           if (!scope.src) {
@@ -176,6 +211,16 @@
               element.css('background-image', 'url(' + url + ')');
             } else {
               element.attr('src', url);
+            }
+          }
+        }
+
+        // Find an url_ property on the imgObj to run the $watch on. This is less expensive than deep watching the
+        // entire object and ensures we can also catch a mutation of the image properties on it.
+        function findPropToWatch (imgObj) {
+          for (var prop in imgObj) {
+            if (prop.indexOf('url_') === 0) {
+              return prop;
             }
           }
         }
