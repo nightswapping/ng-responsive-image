@@ -27,8 +27,24 @@
 
         function waitForFirstLoad () {
 
-          // First load has not happened and we have not started watching yet
-          if (!unwatch && !findPropToWatch(scope.src)) {
+          // We have a promise or a broken angular-resource-instance with the promise hidden under $promise,
+          // but it is not resolved yet as there is no propToWatch
+          if (!unwatch && scope.src && !findPropToWatch(scope.src) && (scope.src.$promise || scope.src.then)) {
+            (scope.src.$promise || scope.src).then(function () {
+              // When the promise is resolved, move on to wait for subsequent loads, or throw if there are no usable
+              // properties on the image object
+              if (findPropToWatch(scope.src)) {
+                waitForSubsequentLoads();
+              }
+
+              else {
+                throw new Error('Image object does not contain any appropriate url_ properties');
+              }
+            });
+          }
+
+          // First load has not happened, there is no promise and we have not started watching yet
+          else if (!unwatch && !findPropToWatch(scope.src)) {
             // Start to watch so we can react when src becomes useful
             unwatch = scope.$watch('src', waitForFirstLoad);
           }
@@ -64,21 +80,12 @@
         waitForFirstLoad();
 
         function updateImage () {
-          if (!scope.src) {
-            // We don't want anything to happen until scope.src actually receives a value.
-            return;
-          }
 
-          // Handle values as well as then-able promises
-          $q.when(scope.src).then(setImage);
-
-          function setImage (src) {
-            var url = matchImage(src, width, ratio);
-            if (element.attr('background')) {
-              element.css('background-image', 'url(' + url + ')');
-            } else {
-              element.attr('src', url);
-            }
+          var url = matchImage(scope.src, width, ratio);
+          if (element.attr('background')) {
+            element.css('background-image', 'url(' + url + ')');
+          } else {
+            element.attr('src', url);
           }
         }
 
