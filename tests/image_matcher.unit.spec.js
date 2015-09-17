@@ -31,27 +31,23 @@ describe('Responsive image src - image matcher', function () {
 
     beforeEach(inject(injector));
 
-    it('should select a perfect match', function () {
-      expect(matchImage(imgObj, 300, 1.5)).toEqual('http://image4.example.com');
+    it('selects a perfect match', function () {
+      expect(matchImage(imgObj, 300, 200, 1.5)).toEqual('http://image4.example.com');
     });
 
-    it('should select the highest still fitting ratio in the absence of an exact match', function () {
-      expect(matchImage(imgObj, 300, 2)).toEqual('http://image4.example.com');
+    it('selects the highest still fitting ratio in the absence of an exact match', function () {
+      expect(matchImage(imgObj, 300, 150, 2)).toEqual('http://image4.example.com');
     });
 
-    it('should throw if there is no image with an appropriate ratio', function () {
-      expect(function () { matchImage(imgObj, 300, 0.8); }).toThrow();
+    it('selects the smallest possible large enough image in the absence of an exact match', function () {
+      expect(matchImage(imgObj, 150, 150, 1)).toEqual('http://image2.example.com');
     });
 
-    it('should select the smallest possible large enough image in the absence of an exact match', function () {
-      expect(matchImage(imgObj, 150, 1)).toEqual('http://image2.example.com');
+    it('throws when there is no image large enough to fit', function () {
+      expect(function () { matchImage(imgObj, 1000, 666.666, 1.5); }).toThrow();
     });
 
-    it('should throw if there is no image large enough to fit', function () {
-      expect(function () { matchImage(imgObj, 1000, 1.5); }).toThrow();
-    });
-
-    it('should work with specific cases where the highest viable ratio images would not be large enough', function () {
+    it('works with specific cases where the highest viable ratio images would not be large enough', function () {
       imgObj = {
         url_100x100: 'http://image1.example.com',
         url_200x200: 'http://image2.example.com',
@@ -60,9 +56,8 @@ describe('Responsive image src - image matcher', function () {
         url_400x600: 'http://image5.example.com',
         url_600x900: 'http://image6.example.com'
       };
-      expect(matchImage(imgObj, 400, 1.2)).toEqual('http://image5.example.com');
+      expect(matchImage(imgObj, 400, 333.333, 1.2)).toEqual('http://image5.example.com');
     });
-
   });
 
   describe('pixel density === 3 environment', function () {
@@ -74,12 +69,12 @@ describe('Responsive image src - image matcher', function () {
 
     beforeEach(inject(injector));
 
-    it('should select a perfect match for a higher pixel density', function () {
-      expect(matchImage(imgObj, 300, 1.5)).toEqual('http://image6.example.com');
+    it('selects a perfect match for a higher pixel density', function () {
+      expect(matchImage(imgObj, 300, 200, 1.5)).toEqual('http://image6.example.com');
     });
 
-    it('should do the best possible choice when neither width nor ratio have an exact match', function () {
-      expect(matchImage(imgObj, 60, 1.3)).toEqual('http://image2.example.com');
+    it('does the best possible choice when neither width nor ratio have an exact match', function () {
+      expect(matchImage(imgObj, 60, 46.15, 1.3)).toEqual('http://image4.example.com');
     });
   });
 
@@ -87,24 +82,28 @@ describe('Responsive image src - image matcher', function () {
 
     beforeEach(inject(injector));
 
-    it('should throw if it lacks a ratio', function () {
-      expect(function () { matchImage(imgObj, 300); }).toThrow();
+    it('throws when it lacks a ratio', function () {
+      expect(function () { matchImage(imgObj, 300, 200); }).toThrow();
     });
 
-    it('should throw if it lacks a width', function () {
-      expect(function () { matchImage(imgObj, undefined, 1.5); }).toThrow();
+    it('throws when it lacks a width', function () {
+      expect(function () { matchImage(imgObj, undefined, 200, 1.5); }).toThrow();
     });
 
-    it('should throw if it lacks an img object', function () {
-      expect(function () { matchImage(undefined, 300, 1.5); }).toThrow();
+    it('throws when it lacks a height', function () {
+      expect(function () { matchImage(imgObj, 300, undefined, 1.5); }).toThrow();
     });
 
-    it('should throw if fed an incorrect img object', function () {
+    it('throws when it lacks an img object', function () {
+      expect(function () { matchImage(undefined, 300, 200, 1.5); }).toThrow();
+    });
+
+    it('throws when passed an incorrect img object', function () {
       imgObj = {
         '100_100': 'http://image1.example.com',
         '200_200': 'http://image2.example.com'
       };
-      expect(function () { matchImage(imgObj, 100, 1); }).toThrow();
+      expect(function () { matchImage(imgObj, 100, 100, 1); }).toThrow();
     });
   });
 });

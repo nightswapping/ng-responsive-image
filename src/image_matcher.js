@@ -7,9 +7,9 @@
   function matchImageFactory ($window, RSrcPixelDensity) {
     // RSrcPixelDensity should be an integer between 1 and 4 representing the screen's pixel density.
 
-    return function matchImage (imgObj, width, ratio) {
+    return function matchImage (imgObj, width, height, ratio) {
 
-      if (!imgObj || !width || !ratio) {
+      if (!imgObj || !width || !height || !ratio) {
         throw new Error('r-src must be provided an src object, a width and a ratio.');
       }
 
@@ -33,12 +33,17 @@
         if (!width || !height || !ratio) {
           throw new Error('Unexpected image object. rSrc needs keys of the form url_000x000 with urls as values');
         }
-        return [ ratio, width, imgObj[item] ];
+        return [ ratio, width, height, imgObj[item] ];
       })
 
-      // Filter out non-img items and find images that match the exact ratio or taller
-      .filter(function filterImagesByRatio (item, index, array) {
-        return item && +item[0] <= +ratio;
+      // Remove falsy values such as null
+      .filter(function removeFalsyValues (item, index, array) {
+        return !!item;
+      })
+
+      // Find images tall enough to fit
+      .filter(function filterImagesByHeight (item, index, array) {
+        return +item[2] >= height * RSrcPixelDensity;
       })
 
       // Find images large enough to fit, or larger
@@ -51,8 +56,20 @@
         return a[0] - b[0];
       })
 
-      // Keep only the highest ratio images. If we have an exact match, those will be it. Otherwise those will be
-      // the least tall images that are still tall enough to fit - we can't leave empty spaces.
+      .filter(function pickExactRatio (item, index, array) {
+        // If there are exact match ratio images in the imgObj, pick those
+        if (array.filter(function (item) { return item[0] === ratio; })[0]) {
+          return item[0] === ratio;
+        }
+
+        // Otherwise do nothing, we will select the proper images below
+        else {
+          return true;
+        }
+      })
+
+      // Keep only the highest ratio images. If we have an exact match, it's all that will be left anyway.
+      // Otherwise this will leave us with the least all images still tall enough to fit
       .reduceRight(function keepHighestRatioImages (acc, item, index, array) {
         return (acc.length > 0) && (+item[0] < acc[0][0]) ? acc : acc.concat([ item ]);
       }, [])
@@ -69,7 +86,7 @@
           'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints');
       }
 
-      return match[2];
+      return match[3];
     };
   }
 

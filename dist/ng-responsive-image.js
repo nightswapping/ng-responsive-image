@@ -1,5 +1,5 @@
 /**!
- * ng-responsive-image - v0.1.6 - 2015-06-10
+ * ng-responsive-image - v0.1.6 - 2015-09-17
  *
  * Copyright (c) 2015 [object Object]
  * Distributed under the MIT licence
@@ -13,9 +13,9 @@
   function matchImageFactory ($window, RSrcPixelDensity) {
     // RSrcPixelDensity should be an integer between 1 and 4 representing the screen's pixel density.
 
-    return function matchImage (imgObj, width, ratio) {
+    return function matchImage (imgObj, width, height, ratio) {
 
-      if (!imgObj || !width || !ratio) {
+      if (!imgObj || !width || !height || !ratio) {
         throw new Error('r-src must be provided an src object, a width and a ratio.');
       }
 
@@ -39,12 +39,17 @@
         if (!width || !height || !ratio) {
           throw new Error('Unexpected image object. rSrc needs keys of the form url_000x000 with urls as values');
         }
-        return [ ratio, width, imgObj[item] ];
+        return [ ratio, width, height, imgObj[item] ];
       })
 
-      // Filter out non-img items and find images that match the exact ratio or taller
-      .filter(function filterImagesByRatio (item, index, array) {
-        return item && +item[0] <= +ratio;
+      // Remove falsy values such as null
+      .filter(function removeFalsyValues (item, index, array) {
+        return !!item;
+      })
+
+      // Find images tall enough to fit
+      .filter(function filterImagesByHeight (item, index, array) {
+        return +item[2] >= height * RSrcPixelDensity;
       })
 
       // Find images large enough to fit, or larger
@@ -57,8 +62,20 @@
         return a[0] - b[0];
       })
 
-      // Keep only the highest ratio images. If we have an exact match, those will be it. Otherwise those will be
-      // the least tall images that are still tall enough to fit - we can't leave empty spaces.
+      .filter(function pickExactRatio (item, index, array) {
+        // If there are exact match ratio images in the imgObj, pick those
+        if (array.filter(function (item) { return item[0] === ratio; })[0]) {
+          return item[0] === ratio;
+        }
+
+        // Otherwise do nothing, we will select the proper images below
+        else {
+          return true;
+        }
+      })
+
+      // Keep only the highest ratio images. If we have an exact match, it's all that will be left anyway.
+      // Otherwise this will leave us with the least all images still tall enough to fit
       .reduceRight(function keepHighestRatioImages (acc, item, index, array) {
         return (acc.length > 0) && (+item[0] < acc[0][0]) ? acc : acc.concat([ item ]);
       }, [])
@@ -75,7 +92,7 @@
           'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints');
       }
 
-      return match[2];
+      return match[3];
     };
   }
 
@@ -153,7 +170,7 @@
         src: '=rSrc'
       },
       link: function linkResponsiveSrc (scope, element, attrs) {
-        var width, ratio, unwatch;
+        var width, height, ratio, unwatch;
 
         // Calculate the constraints. We only need to do this once.
         constraints();
@@ -214,7 +231,7 @@
 
         function updateImage () {
 
-          var url = matchImage(scope.src, width, ratio);
+          var url = matchImage(scope.src, width, height, ratio);
           if (element.attr('background')) {
             element.css('background-image', 'url(' + url + ')');
           } else {
@@ -244,6 +261,16 @@
           // If nothing is explicitly specified and the CSS does not handle width either, throw
           if (!width) {
             throw new Error('rSrc needs either a width or an element with a CSS applied width');
+          }
+
+          // For height, take the attribute, calculate if with the ratio, or take the element's actual height
+          height = +attrs.height             ||
+                   attrs.width / attrs.ratio ||
+                   element[0].clientHeight   ||
+                   element[0].clientWidth / attrs.ratio;
+
+          if (!height) {
+            throw new Error('rSrc needs either a height, a ratio or an element with a CSS applied height');
           }
 
           // For ratio, take an explicit ratio, calculate it from an explcit height, or from an actual height

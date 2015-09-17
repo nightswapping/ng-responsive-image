@@ -20,7 +20,7 @@
         src: '=rSrc'
       },
       link: function linkResponsiveSrc (scope, element, attrs) {
-        var width, ratio, unwatch;
+        var width, height, ratio, unwatch;
 
         // Calculate the constraints. We only need to do this once.
         constraints();
@@ -81,7 +81,7 @@
 
         function updateImage () {
 
-          var url = matchImage(scope.src, width, ratio);
+          var url = matchImage(scope.src, width, height, ratio);
           if (element.attr('background')) {
             element.css('background-image', 'url(' + url + ')');
           } else {
@@ -111,6 +111,16 @@
           // If nothing is explicitly specified and the CSS does not handle width either, throw
           if (!width) {
             throw new Error('rSrc needs either a width or an element with a CSS applied width');
+          }
+
+          // For height, take the attribute, calculate if with the ratio, or take the element's actual height
+          height = +attrs.height             ||
+                   attrs.width / attrs.ratio ||
+                   element[0].clientHeight   ||
+                   element[0].clientWidth / attrs.ratio;
+
+          if (!height) {
+            throw new Error('rSrc needs either a height, a ratio or an element with a CSS applied height');
           }
 
           // For ratio, take an explicit ratio, calculate it from an explcit height, or from an actual height

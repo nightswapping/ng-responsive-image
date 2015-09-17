@@ -31,7 +31,7 @@ describe('Responsive img src', function () {
   // NB: we use document.body.appendChild and hand our element a default src because an element not injected
   // into the DOM does not have a width/height, and neither does an image without an src.
 
-  it('should set the proper image src from css defined width & height', function () {
+  it('sets the proper image src from css defined width & height', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj">');
     document.body.appendChild(element[0]);
     element.css('width', '300px');
@@ -44,7 +44,7 @@ describe('Responsive img src', function () {
   });
 
   // This is more a proof of concept than a unit test
-  it('should set the proper image src from css defined width & height from parent element', function () {
+  it('sets the proper image src from css defined width & height from parent element', function () {
     var parent = angular.element('<div></div>');
     parent.css('width', '300px');
     parent.css('height', '300px');
@@ -61,10 +61,11 @@ describe('Responsive img src', function () {
     expect(element.attr('src')).toEqual('http://image4.example.com');
   });
 
-  it('should set the proper image src from css defined width & input ratio', function () {
+  it('sets the proper image src from css defined width & input ratio', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" ratio="1.5">');
     document.body.appendChild(element[0]);
     element.css('width', '300px');
+    element.css('height', 0);
 
     $compile(element)(scope);
     scope.$apply();
@@ -72,7 +73,7 @@ describe('Responsive img src', function () {
     expect(element.attr('src')).toEqual('http://image4.example.com');
   });
 
-  it('should set the proper image src from css defined with & input height', function () {
+  it('sets the proper image src from css defined with & input height', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" height="500">');
     document.body.appendChild(element[0]);
     element.css('width', '900px');
@@ -83,7 +84,7 @@ describe('Responsive img src', function () {
     expect(element.attr('src')).toEqual('http://image6.example.com');
   });
 
-  it('should set the proper image src from css defined height & input width', function () {
+  it('sets the proper image src from css defined height & input width', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" width="100">');
     document.body.appendChild(element[0]);
     element.css('height', '100px');
@@ -94,7 +95,7 @@ describe('Responsive img src', function () {
     expect(element.attr('src')).toEqual('http://image1.example.com');
   });
 
-  it('should set the proper image src from css defined height & input ratio', function () {
+  it('sets the proper image src from css defined height & input ratio', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" ratio="1.5">');
     document.body.appendChild(element[0]);
     element.css('height', '400px');
@@ -105,7 +106,7 @@ describe('Responsive img src', function () {
     expect(element.attr('src')).toEqual('http://image5.example.com');
   });
 
-  it('should set the proper image from input height & input ratio', function () {
+  it('sets the proper image from input height & input ratio', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" ratio="1.5" height="600">');
 
     $compile(element)(scope);
@@ -114,7 +115,7 @@ describe('Responsive img src', function () {
     expect(element.attr('src')).toEqual('http://image6.example.com');
   });
 
-  it('should set the proper image from input width & input height', function () {
+  it('sets the proper image from input width & input height', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj" width="200" height="200">');
 
     $compile(element)(scope);
@@ -123,7 +124,7 @@ describe('Responsive img src', function () {
     expect(element.attr('src')).toEqual('http://image2.example.com');
   });
 
-  it('should set the proper image as a background image', function () {
+  it('sets the proper image as a background image', function () {
     element = angular.element('<div r-src="imgObj" background="true"></div>');
     document.body.appendChild(element[0]);
     element.css('width', '300px');
@@ -136,7 +137,7 @@ describe('Responsive img src', function () {
   });
 
 
-  it('should not do anything until imageObject is actually defined and load the image as soon as it is', function () {
+  it('does not do anything until imageObject is actually defined and loads the image as soon as it is', function () {
     element = angular.element('<img src="' + transparentGif + '" r-src="imgObj">');
     document.body.appendChild(element[0]);
     element.css('width', '300px');
