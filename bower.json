@@ -1,6 +1,6 @@
 {
   "name": "ng-responsive-image",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "homepage": "https://github.com/nightswapping/ng-responsive-image",
   "description": "Lightweight responsive images for angular apps.",
   "main": "dist/ng-responsive-image.js",
