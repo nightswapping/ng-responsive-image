@@ -1,5 +1,5 @@
 /**!
- * ng-responsive-image - v0.1.7 - 2015-09-17
+ * ng-responsive-image - v0.1.7 - 2015-09-21
  *
  * Copyright (c) 2015 [object Object]
  * Distributed under the MIT licence
@@ -167,10 +167,14 @@
     return {
       restrict: 'A',
       scope: {
-        src: '=rSrc'
+        src: '=rSrc',
+        image_is_loaded: '=?imageIsLoaded'
       },
       link: function linkResponsiveSrc (scope, element, attrs) {
-        var width, height, ratio, unwatch;
+        var width, height, ratio, unwatch, deferred;
+
+        deferred = $q.defer();
+        scope.image_is_loaded = deferred.promise;
 
         // Calculate the constraints. We only need to do this once.
         constraints();
@@ -230,13 +234,29 @@
         waitForFirstLoad();
 
         function updateImage () {
-
+          // Use our matcher to get the URL we'll be using for the image
           var url = matchImage(scope.src, width, height, ratio);
-          if (element.attr('background')) {
-            element.css('background-image', 'url(' + url + ')');
-          } else {
-            element.attr('src', url);
-          }
+          // Preload the image using a made-up img element
+          var img = document.createElement('img');
+          img.src = url;
+          img.onload = function () {
+            // If we loaded an invalid image, trigger the error callback
+            if (img.naturalWidth + img.naturalHeight === 0) {
+              return img.onerror();
+            }
+            // Resolve the promise so the consumer knows we succeeded
+            deferred.resolve();
+            // Do set the image in place
+            if (element.attr('background')) {
+              element.css('background-image', 'url(' + url + ')');
+            } else {
+              element.attr('src', url);
+            }
+          };
+          // Reject the promise so the error bubbles up
+          img.onerror = function () {
+            deferred.reject('Failed to load an image.');
+          };
         }
 
         // Find an url_ property on the imgObj to run the $watch on. This is less expensive than deep watching the
