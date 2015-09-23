@@ -1,6 +1,6 @@
 {
   "name": "ng-responsive-image",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Lightweight responsive images for angular apps.",
   "main": "dist/ng-responsive-image.js",
   "scripts": {

@@ -1,5 +1,5 @@
 /**!
- * ng-responsive-image - v0.1.8 - 2015-09-23
+ * ng-responsive-image - v0.1.9 - 2015-09-23
  *
  * Copyright (c) 2015 [object Object]
  * Distributed under the MIT licence
