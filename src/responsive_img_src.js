@@ -42,7 +42,9 @@
               }
 
               else {
-                throw new Error('Image object does not contain any appropriate url_ properties');
+                var err = new Error('Image object does not contain any appropriate url_ properties');
+                deferred.reject(err);
+                throw err;
               }
             });
           }
@@ -59,6 +61,12 @@
             if (unwatch) { unwatch(); }
             // Trigger the watch that will actually update the image and keep watching for changes
             waitForSubsequentLoads();
+          }
+
+          else if (scope.src !== undefined) {
+            var err = new Error('Image object does not contain any appropriate url_ properties');
+            deferred.reject(err);
+            throw err;
           }
         }
 

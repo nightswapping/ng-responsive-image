@@ -156,7 +156,7 @@ describe('Responsive img src', function () {
     document.body.appendChild(element[0]);
     element.css('width', '300px');
     element.css('height', '300px');
-    scope.imgObj = null;
+    scope.imgObj = undefined;
 
     $compile(element)(scope);
     scope.$apply();
