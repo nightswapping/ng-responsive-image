@@ -44,7 +44,8 @@
               else {
                 var err = new Error('Image object does not contain any appropriate url_ properties');
                 deferred.reject(err);
-                throw err;
+                console.error(err);
+                return;
               }
             });
           }
@@ -66,7 +67,8 @@
           else if (scope.src !== undefined) {
             var err = new Error('Image object does not contain any appropriate url_ properties');
             deferred.reject(err);
-            throw err;
+            console.error(err);
+            return;
           }
         }
 
@@ -138,7 +140,8 @@
 
           // If nothing is explicitly specified and the CSS does not handle width either, throw
           if (!width) {
-            throw new Error('rSrc needs either a width or an element with a CSS applied width');
+            console.error(new Error('rSrc needs either a width or an element with a CSS applied width'));
+            return;
           }
 
           // For height, take the attribute, calculate if with the ratio, or take the element's actual height
@@ -148,7 +151,8 @@
                    element[0].clientWidth / attrs.ratio;
 
           if (!height) {
-            throw new Error('rSrc needs either a height, a ratio or an element with a CSS applied height');
+            console.error(new Error('rSrc needs either a height, a ratio or an element with a CSS applied height'));
+            return;
           }
 
           // For ratio, take an explicit ratio, calculate it from an explcit height, or from an actual height
@@ -158,7 +162,8 @@
           // If no ratio was specified or possible to calculate (for the lack of an explicit or CSS-defined height),
           // throw. NB: x / 0 where x is a number returns Infinity.
           if (!ratio || ratio === Infinity) {
-            throw new Error('rSrc needs either a height, a ratio, or an element with a CSS applied height');
+            console.error(new Error('rSrc needs either a height, a ratio, or an element with a CSS applied height'));
+            return;
           }
         }
       }

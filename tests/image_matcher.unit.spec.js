@@ -22,6 +22,10 @@ describe('Responsive image src - image matcher', function () {
     };
   }
 
+  beforeEach(function () {
+    spyOn(console, 'error');
+  });
+
   describe('pixel density === 1 environment', function () {
 
     beforeEach(module(function ($provide) {
@@ -43,8 +47,9 @@ describe('Responsive image src - image matcher', function () {
       expect(matchImage(imgObj, 150, 150, 1)).toEqual('http://image2.example.com');
     });
 
-    it('throws when there is no image large enough to fit', function () {
-      expect(function () { matchImage(imgObj, 1000, 666.666, 1.5); }).toThrow();
+    it('reports an error when there is no image large enough to fit', function () {
+      matchImage(imgObj, 1000, 666.666, 1.5);
+      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
     });
 
     it('works with specific cases where the highest viable ratio images would not be large enough', function () {
@@ -82,28 +87,33 @@ describe('Responsive image src - image matcher', function () {
 
     beforeEach(inject(injector));
 
-    it('throws when it lacks a ratio', function () {
-      expect(function () { matchImage(imgObj, 300, 200); }).toThrow();
+    it('reports an error when it lacks a ratio', function () {
+      matchImage(imgObj, 300, 200);
+      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
     });
 
-    it('throws when it lacks a width', function () {
-      expect(function () { matchImage(imgObj, undefined, 200, 1.5); }).toThrow();
+    it('reports an error when it lacks a width', function () {
+      matchImage(imgObj, undefined, 200, 1.5);
+      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
     });
 
-    it('throws when it lacks a height', function () {
-      expect(function () { matchImage(imgObj, 300, undefined, 1.5); }).toThrow();
+    it('reports an error when it lacks a height', function () {
+      matchImage(imgObj, 300, undefined, 1.5);
+      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
     });
 
-    it('throws when it lacks an img object', function () {
-      expect(function () { matchImage(undefined, 300, 200, 1.5); }).toThrow();
+    it('reports an error when it lacks an img object', function () {
+      matchImage(undefined, 300, 200, 1.5);
+      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
     });
 
-    it('throws when passed an incorrect img object', function () {
+    it('reports an error when passed an incorrect img object', function () {
       imgObj = {
         '100_100': 'http://image1.example.com',
         '200_200': 'http://image2.example.com'
       };
-      expect(function () { matchImage(imgObj, 100, 100, 1); }).toThrow();
+      matchImage(imgObj, 100, 100, 1);
+      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
     });
   });
 });

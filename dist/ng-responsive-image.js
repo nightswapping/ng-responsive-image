@@ -1,5 +1,5 @@
 /**!
- * ng-responsive-image - v0.1.9 - 2015-09-23
+ * ng-responsive-image - v0.1.9 - 2015-10-20
  *
  * Copyright (c) 2015 [object Object]
  * Distributed under the MIT licence
@@ -16,7 +16,8 @@
     return function matchImage (imgObj, width, height, ratio) {
 
       if (!imgObj || !width || !height || !ratio) {
-        throw new Error('r-src must be provided an src object, a width and a ratio.');
+        console.error(new Error('r-src must be provided an src object, a width and a ratio.'));
+        return;
       }
 
       // Iterate over src to find the best possible match
@@ -37,7 +38,8 @@
             height = m[2],
             ratio  = width / height;
         if (!width || !height || !ratio) {
-          throw new Error('Unexpected image object. rSrc needs keys of the form url_000x000 with urls as values');
+          console.error(new Error('Unexpected image object. rSrc needs keys of the form url_0x0 with urls as values'));
+          return;
         }
         return [ ratio, width, height, imgObj[item] ];
       })
@@ -88,8 +90,9 @@
 
       // Programmer error, we should just throw and try to be helpful
       if (!match) {
-        throw new Error('No image in src fitting width (' + width + '), ' +
-          'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints');
+        console.error(new Error('No image in src fitting width (' + width + '), ' +
+          'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints'));
+        return;
       }
 
       return match[3];
@@ -194,7 +197,8 @@
               else {
                 var err = new Error('Image object does not contain any appropriate url_ properties');
                 deferred.reject(err);
-                throw err;
+                console.error(err);
+                return;
               }
             });
           }
@@ -216,7 +220,8 @@
           else if (scope.src !== undefined) {
             var err = new Error('Image object does not contain any appropriate url_ properties');
             deferred.reject(err);
-            throw err;
+            console.error(err);
+            return;
           }
         }
 
@@ -288,7 +293,8 @@
 
           // If nothing is explicitly specified and the CSS does not handle width either, throw
           if (!width) {
-            throw new Error('rSrc needs either a width or an element with a CSS applied width');
+            console.error(new Error('rSrc needs either a width or an element with a CSS applied width'));
+            return;
           }
 
           // For height, take the attribute, calculate if with the ratio, or take the element's actual height
@@ -298,7 +304,8 @@
                    element[0].clientWidth / attrs.ratio;
 
           if (!height) {
-            throw new Error('rSrc needs either a height, a ratio or an element with a CSS applied height');
+            console.error(new Error('rSrc needs either a height, a ratio or an element with a CSS applied height'));
+            return;
           }
 
           // For ratio, take an explicit ratio, calculate it from an explcit height, or from an actual height
@@ -308,7 +315,8 @@
           // If no ratio was specified or possible to calculate (for the lack of an explicit or CSS-defined height),
           // throw. NB: x / 0 where x is a number returns Infinity.
           if (!ratio || ratio === Infinity) {
-            throw new Error('rSrc needs either a height, a ratio, or an element with a CSS applied height');
+            console.error(new Error('rSrc needs either a height, a ratio, or an element with a CSS applied height'));
+            return;
           }
         }
       }

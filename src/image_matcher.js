@@ -10,7 +10,8 @@
     return function matchImage (imgObj, width, height, ratio) {
 
       if (!imgObj || !width || !height || !ratio) {
-        throw new Error('r-src must be provided an src object, a width and a ratio.');
+        console.error(new Error('r-src must be provided an src object, a width and a ratio.'));
+        return;
       }
 
       // Iterate over src to find the best possible match
@@ -31,7 +32,8 @@
             height = m[2],
             ratio  = width / height;
         if (!width || !height || !ratio) {
-          throw new Error('Unexpected image object. rSrc needs keys of the form url_000x000 with urls as values');
+          console.error(new Error('Unexpected image object. rSrc needs keys of the form url_0x0 with urls as values'));
+          return;
         }
         return [ ratio, width, height, imgObj[item] ];
       })
@@ -82,8 +84,9 @@
 
       // Programmer error, we should just throw and try to be helpful
       if (!match) {
-        throw new Error('No image in src fitting width (' + width + '), ' +
-          'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints');
+        console.error(new Error('No image in src fitting width (' + width + '), ' +
+          'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints'));
+        return;
       }
 
       return match[3];
