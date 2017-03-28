@@ -24,6 +24,7 @@ describe('Responsive image src - image matcher', function () {
 
   beforeEach(function () {
     spyOn(console, 'error');
+    spyOn(console, 'warn');
   });
 
   describe('pixel density === 1 environment', function () {
@@ -47,9 +48,9 @@ describe('Responsive image src - image matcher', function () {
       expect(matchImage(imgObj, 150, 150, 1)).toEqual('http://image2.example.com');
     });
 
-    it('reports an error when there is no image large enough to fit', function () {
-      matchImage(imgObj, 1000, 666.666, 1.5);
-      expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
+    it('selects the largest img and sends a warning when there is no image large enough to fit', function () {
+      expect(matchImage(imgObj, 1000, 666.666, 1.5)).toEqual('http://image6.example.com');
+      expect(console.warn).toHaveBeenCalledWith(jasmine.any(String));
     });
 
     it('works with specific cases where the highest viable ratio images would not be large enough', function () {

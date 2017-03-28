@@ -82,11 +82,26 @@
           (+item[1] < +acc[1]) ? item : acc;        // If the item is smaller than what we had, take it instead
       }, false); // Avoid a TypeError to allow our smarter reporting right below.
 
-      // Programmer error, we should just throw and try to be helpful
+      // There's no matching image. Just return the largest image we have and hopefully the user will not notice
       if (!match) {
-        console.error(new Error('No image in src fitting width (' + width + '), ' +
-          'pixel density (' + RSrcPixelDensity + '), & ratio (' + ratio + ') constraints'));
-        return;
+        var largestImageKeyMatch = Object.keys(imgObj)
+        .map(function (key) { return key.match(/^url_(\d+)x(\d+)$/); })
+        .reduce(function (acc, matchedKey) {
+          if (!matchedKey || !matchedKey[1] || acc && acc[1] > matchedKey[1]) {
+            return acc;
+          }
+          else {
+            return matchedKey;
+          }
+        });
+
+        if (!largestImageKeyMatch) {
+          console.error(new Error('The image object does not contain any proper image properties.'));
+          return;
+        }
+
+        console.warn('No image for ' + width + 'px/' + RSrcPixelDensity + '/' + ratio + '. Falling back to largest.');
+        return imgObj[largestImageKeyMatch[0]];
       }
 
       return match[3];
